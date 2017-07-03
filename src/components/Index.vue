@@ -42,6 +42,26 @@
 </template>
 
 <script>
+import Datastore from 'nedb'
+
+export default {
+  created: () => {
+    let db = new Datastore({filename: 'englishname', autoload: true})
+    db.count({}, (_, count) => {
+      if (count <= 0) {
+        var englishnameDb = require('../assets/englishname.json')
+        db.insert(englishnameDb, (err, newDoc) => {
+          console.log(err)
+        })
+      }
+    })
+    db.find({ name: 'dexter' }, (err, docs) => {
+      console.log(err)
+      console.log(docs)
+    })
+  }
+}
+
 </script>
 
 <style lang="stylus">
