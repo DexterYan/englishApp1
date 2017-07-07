@@ -1,7 +1,9 @@
 <template>
   <q-layout>
     <div slot="header" class="toolbar primary">
-      <q-search placeholder="Name" class="input"/>
+      <q-autocomplete v-model="names" @search="search" :delay="0">
+        <q-search placeholder="Name" v-model="names" class="input"/>
+      </q-autocomplete>
     </div>
     <div class="layout-view home">
       <div class="layout-padding">
@@ -43,8 +45,25 @@
 
 <script>
 import Datastore from 'nedb'
+import {Utils} from 'quasar'
+
+function parseNames () {
+  var names = ['dexter', 'sally']
+  return names.map(name => {
+    return {
+      label: name,
+      value: name
+    }
+  })
+}
 
 export default {
+  data () {
+    return {
+      names: '',
+      namelist: parseNames()
+    }
+  },
   created: () => {
     let db = new Datastore({filename: 'englishname', autoload: true})
     db.count({}, (_, count) => {
@@ -59,6 +78,13 @@ export default {
       console.log(err)
       console.log(docs)
     })
+  },
+  methods: {
+    search (names, done) {
+      setTimeout(() => {
+        done(Utils.filter(names, {field: 'value', list: parseNames()}))
+      }, 500)
+    }
   }
 }
 
@@ -100,6 +126,8 @@ export default {
 .toolbar
   &.primary
     background #7F67D3
+    span
+      width 100%
 
 .input
     background #7F67D3
