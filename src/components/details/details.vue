@@ -10,11 +10,18 @@
         <div class="intro">
           <avatar username="Dexter" :size="100" class="avatar-name"></avatar>
           <div class="name">Dexter</div>
+          <div class="meaning">dyer, right-handed</div>
         </div>
       </div>
       <div class="sub-intro">
-        <div class="left-block">Good</div>
-        <div class="right-block"></div>
+        <div class="left-block">
+          <div class="block-des">Latin</div>
+          <div class="block-title">Origin</div>
+        </div>
+        <div class="right-block">
+          <div class="block-des">Male</div>
+          <div class="block-title">Gender</div>
+        </div>
       </div>
     </div>
   </q-layout>
@@ -79,23 +86,34 @@ export default {
       padding-top 18%
       padding-left 10%
       .avatar-name 
-        display inline-block 
+        float left
       .name
-        display inline-block
+        float right
         font-weight 300
         font-size 3em
+        margin-right 20%
         color white
-        margin-left 12%
+      .meaning
+        float right
+        color #87CEFA
+        margin-right 20%
   .sub-intro
     height 50%
+    color white
     .left-block
       float left
       width 50%
       height 40%
-      background-color #26abff
+      background-color #26C1FF
     .right-block
       float right
       width 50%
       height 40%
-      background-color #ff7793
+      background-color #FF96C8
+    .block-title
+      text-align center
+    .block-des
+      padding-top 20%
+      font-size 28px
+      text-align center
 </style>

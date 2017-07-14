@@ -1,7 +1,7 @@
 <template>
   <q-layout>
     <div slot="header" class="toolbar primary">
-      <q-autocomplete v-model="names" @search="search" :delay="0">
+      <q-autocomplete v-model="names" @search="search" @selected="selected"  :delay="0">
         <q-search placeholder="Name" v-model="names" class="input"/>
       </q-autocomplete>
     </div>
@@ -45,14 +45,15 @@
 
 <script>
 import Datastore from 'nedb'
-import {Utils} from 'quasar'
+import { Utils, Toast } from 'quasar'
 
-function parseNames () {
-  var names = ['dexter', 'sally']
+var db = new Datastore({filename: 'englishname', autoload: true})
+function parseNames (names) {
   return names.map(name => {
+    let gender = (name.gender === 'F' ? '<div class="search_des">female</div>' : '<div class="search_des">male</div>')
     return {
-      label: name,
-      value: name
+      label: '<div class="search_res">' + name.name + '</div>' + gender,
+      value: name.name + '/' + gender
     }
   })
 }
@@ -61,11 +62,10 @@ export default {
   data () {
     return {
       names: '',
-      namelist: parseNames()
+      namelist: parseNames(['dexter'])
     }
   },
   created: () => {
-    let db = new Datastore({filename: 'englishname', autoload: true})
     db.count({}, (_, count) => {
       if (count <= 0) {
         var englishnameDb = require('../assets/englishname.json')
@@ -74,16 +74,24 @@ export default {
         })
       }
     })
-    db.find({ name: 'dexter' }, (err, docs) => {
-      console.log(err)
-      console.log(docs)
-    })
   },
   methods: {
     search (names, done) {
-      setTimeout(() => {
-        done(Utils.filter(names, {field: 'value', list: parseNames()}))
-      }, 500)
+      db.find({}, (_, docs) => {
+        let nameList = docs.map((v, _) => {
+          return {
+            name: v.name,
+            gender: v.gender
+          }
+        })
+        setTimeout(() => {
+          done(Utils.filter(names, {field: 'value', list: parseNames(nameList)}))
+        }, 500)
+      })
+    },
+    selected (item) {
+      console.log(item)
+      Toast.create(`Selected suggestion "${item.label}"`)
     }
   }
 }
@@ -93,6 +101,16 @@ export default {
 <style lang="stylus">
 .layout-header
   border-bottom 0px
+
+.search_des
+  display inline
+  color gray
+  margin-left 10px
+
+.search_res
+  text-transform capitalize
+  display inline
+  font-size 20px
 
 .wod
   padding 16px
