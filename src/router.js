@@ -23,7 +23,7 @@ export default new VueRouter({
   routes: [
     { path: '/', component: load('Index') },
     {
-      path: '/details/:word',
+      path: '/details/:word/:gender',
       component: load('details/details')
     },
     { path: '*', component: load('Error404') }

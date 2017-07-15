@@ -1,7 +1,7 @@
 <template>
   <q-layout>
     <div slot="header" class="toolbar primary">
-      <q-autocomplete v-model="names" @search="search" @selected="selected"  :delay="0">
+      <q-autocomplete v-model="names" @search="search" @selected="selected" :min-characters="2" :delay="0">
         <q-search placeholder="Name" v-model="names" class="input"/>
       </q-autocomplete>
     </div>
@@ -45,15 +45,16 @@
 
 <script>
 import Datastore from 'nedb'
-import { Utils, Toast } from 'quasar'
+import { Utils } from 'quasar'
 
 var db = new Datastore({filename: 'englishname', autoload: true})
 function parseNames (names) {
   return names.map(name => {
     let gender = (name.gender === 'F' ? '<div class="search_des">female</div>' : '<div class="search_des">male</div>')
+    let genderText = (name.gender === 'F' ? 'female' : 'male')
     return {
       label: '<div class="search_res">' + name.name + '</div>' + gender,
-      value: name.name + '/' + gender
+      value: name.name + '/' + genderText
     }
   })
 }
@@ -91,7 +92,7 @@ export default {
     },
     selected (item) {
       console.log(item)
-      Toast.create(`Selected suggestion "${item.label}"`)
+      this.$router.push(`details/${item.value}`)
     }
   }
 }
